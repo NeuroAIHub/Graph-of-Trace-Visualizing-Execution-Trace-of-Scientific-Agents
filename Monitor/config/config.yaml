@@ -1,0 +1,38 @@
+runtime:
+  # 默认使用的服务商
+  active_provider: "openai"
+  # 默认使用该服务商下的哪个 API 组合
+  active_api: "default"
+
+providers:
+  openai:
+    # 建议在 local.yaml 或环境变量中配置真实的 API Key
+    api_key: "${OPENAI_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://api.openai.com/v1"
+        model: "gpt-4.1-mini"
+      gpt4:
+        api_base: "https://api.openai.com/v1"
+        model: "gpt-4.1"
+
+  deepseek:
+    api_key: "${DEEPSEEK_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://api.deepseek.com"
+        model: "deepseek-chat"
+
+  azure:
+    # Azure OpenAI 典型配置示例：
+    # api_base 形如：https://<your-resource-name>.openai.azure.com
+    api_key: "${AZURE_OPENAI_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://your-azure-resource-name.openai.azure.com"
+        deployment: "gpt-4o"         # Azure 中的部署名（deployment name）
+        api_version: "2024-02-15-preview"
+

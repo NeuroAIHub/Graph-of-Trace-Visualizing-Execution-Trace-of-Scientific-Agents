@@ -1,0 +1,49 @@
+# 本地覆盖配置（可选）
+# 本文件会与 config.yaml 合并，同名字段以本文件为准。
+# 支持环境变量占位：${ENV_VAR_NAME}，运行时会被替换为环境变量值。
+# 建议将敏感信息（API Key）放在环境变量中，在此仅写占位符。
+
+runtime:
+  # 当前使用的模型服务商，可选: openai | deepseek | azure
+  active_provider: "azure"
+  # 该服务商下使用的 API 配置名，对应 providers.<provider>.apis 中的键
+  active_api: "default"
+
+# 若需覆盖默认 API Key / 端点，在下方对应 provider 中填写。
+# 留空或使用 ${XXX_API_KEY} 时，需在运行前导出环境变量，例如：
+#   export OPENAI_API_KEY="sk-..."
+#   export DEEPSEEK_API_KEY="..."
+#   export AZURE_OPENAI_API_KEY="..."
+
+providers:
+  openai:
+    # 填写 OpenAI API Key，或保持 "${OPENAI_API_KEY}" 并设置环境变量
+    api_key: "${OPENAI_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        # 可选：自定义 API 基地址（如代理或兼容接口）
+        api_base: "https://api.openai.com/v1"
+        model: "gpt-4o-mini"
+      gpt4:
+        api_base: "https://api.openai.com/v1"
+        model: "gpt-4o"
+
+  deepseek:
+    api_key: "${DEEPSEEK_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://api.deepseek.com"
+        model: "deepseek-chat"
+
+  azure:
+    api_key: "${AZURE_OPENAI_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        # 替换为你的 Azure OpenAI 资源地址
+        api_base: "https://your-azure-resource-name.openai.azure.com"
+        # Azure 部署名（Deployment name），非模型名
+        deployment: "gpt-5.2"
+        api_version: "2025-04-01-preview"
