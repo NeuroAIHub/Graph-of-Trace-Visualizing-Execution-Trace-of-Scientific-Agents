@@ -10,7 +10,10 @@ Our online demo is available [here](http://119.237.242.75:8080 "TraceGraph Onlin
 - You can find TraceGraph (Graph of Thought) on the right side.
 ![openhands_got](./figures/openhands_got.jpeg)
 Here is a prompt template you can use when interacting with the agent:
+```
+Prompt template
+```
 
 ## Notes
-- You can adjust the layout​ on the canvas by performing actions such as dragging​ and zooming.
+- You can adjust the layout​ by dragging​ and zooming on the canvas.
 - Click on a node to view its details.
