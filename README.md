@@ -7,5 +7,6 @@ Our online demo is available [here](http://119.237.242.75:8080 "TraceGraph Onlin
 - Click on the user icon in the bottom-left corner to go to Settings. Then, select Large Language Model​ and enter your corresponding API key.
 ![openhands_setting](./figures/openhands_setting.jpeg)
 - Go back to initial panel by clicking openhands icon in the top-left corner, and start a new conversation.
-- You can find Graph of Thought on the right side.
+- You can find TraceGraph (Graph of Thought) on the right side.
 ![openhands_got](./figures/openhands_got.jpeg)
+Here is a prompt template you can use when interacting with the agent:
