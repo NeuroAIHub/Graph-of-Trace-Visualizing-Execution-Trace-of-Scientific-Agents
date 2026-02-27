@@ -1,6 +1,6 @@
 # TraceGraph
 ![TraceGraph](./figures/UI.png "UI Example of TraceGraph")
-Our online demo is available [here](http://119.237.242.75:8080 "TraceGraph Online Demo")
+Our online demo is available [here](http://8.145.42.208:8080 "TraceGraph Online Demo")
 ## Quick Start
 - Follow the demo link above, and you'll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) UI like this
 ![openhands_init](./figures/openhands_init.jpeg)
@@ -11,7 +11,11 @@ Our online demo is available [here](http://119.237.242.75:8080 "TraceGraph Onlin
 ![openhands_got](./figures/openhands_got.jpeg)
 Here is a prompt template you can use when interacting with the agent:
 ```
-Prompt template
+Please base your analysis on the xxxx dataset, complete the following research tasks under a consistent experimental and evaluation framework, and record your trajectory using build_trace tool:
+### Background and motivation：
+
+### Research Goals：
+
 ```
 
 ## Notes
