@@ -18,7 +18,7 @@ This repo contains the complete Graph of Trace source code, as well as the packa
 ![openhands_setting](./figures/openhands_setting.jpeg)
 3. Go back to initial panel by clicking openhands icon in the top-left corner, and start a new conversation.
 4. You can find Graph of Trace on the right side.
-![openhands_got](./figures/openhands_got.jpeg)
+![openhands_got](./figures/openhands_got.jpg)
 Here is a prompt example you can use when interacting with the agent:
 ```
 Please base your analysis on the SEED dataset and complete the following research tasks under a consistent experimental and evaluation framework:
