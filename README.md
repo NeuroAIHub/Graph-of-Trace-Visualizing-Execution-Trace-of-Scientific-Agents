@@ -1,7 +1,15 @@
 # Graph of Trace
 ![Graph of Trace](./figures/Framework.png "Framework of Graph of Trace")
-**Our online demo is available [here](http://8.145.42.208:8080 "Graph of Trace Online Demo")**
+## Introduction
+**Graph of Trace** is a monitoring and visualization framework that records fine-grained execution events and organizes them into a directed graph that makes agent workflows explicit as they proceed.
+**Features:**
+- Real-time rendering
+- MCP-enabled
+- Agent trajectory level
+This repo contains the complete Graph of Trace source code, as well as the packaged MCP tool `build_trace` and MCP server.
+
 ## Quick Start
+**Our online demo is available [here](http://8.145.42.208:4500 "Graph of Trace Online Demo")**
 1. Follow the demo link above, and you'll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) UI like this
 ![openhands_init](./figures/openhands_init.jpeg)
 2. Click on the user icon in the bottom-left corner to go to Settings. Then, select Large Language Model​ and enter your corresponding API key.
@@ -34,3 +42,5 @@ First, rank all EEG channels in descending order according to their information 
 ## Notes
 - You can adjust the layout​ by dragging​ and zooming on the canvas.
 - Click on a node to view its details.
+
+
