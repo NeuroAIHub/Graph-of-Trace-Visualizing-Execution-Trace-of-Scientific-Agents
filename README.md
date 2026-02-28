@@ -7,6 +7,7 @@
 - Real-time rendering
 - MCP-enabled
 - Agent trajectory level
+
 This repo contains the complete Graph of Trace source code, as well as the packaged MCP tool `build_trace` and MCP server.
 
 ## Quick Start
