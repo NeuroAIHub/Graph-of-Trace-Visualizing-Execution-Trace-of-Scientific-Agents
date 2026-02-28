@@ -1,13 +1,13 @@
 # Graph of Trace
-![Graph of Trace](./figures/UI.png "UI Example of TraceGraph")
+![Graph of Trace](./figures/Framework.png "Framework of Graph of Trace")
 Our online demo is available [here](http://8.145.42.208:8080 "Graph of Trace Online Demo")
 ## Quick Start
-- Follow the demo link above, and you'll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) UI like this
+1. Follow the demo link above, and you'll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) UI like this
 ![openhands_init](./figures/openhands_init.jpeg)
-- Click on the user icon in the bottom-left corner to go to Settings. Then, select Large Language Model​ and enter your corresponding API key.
+2. Click on the user icon in the bottom-left corner to go to Settings. Then, select Large Language Model​ and enter your corresponding API key.
 ![openhands_setting](./figures/openhands_setting.jpeg)
-- Go back to initial panel by clicking openhands icon in the top-left corner, and start a new conversation.
-- You can find Graph of Trace on the right side.
+3. Go back to initial panel by clicking openhands icon in the top-left corner, and start a new conversation.
+4. You can find Graph of Trace on the right side.
 ![openhands_got](./figures/openhands_got.jpeg)
 Here is a prompt example you can use when interacting with the agent:
 ```
