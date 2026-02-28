@@ -86,7 +86,7 @@ mcp.add_tool(logged_tool(tool.build_trace))
 def main() -> None:
     logger.info("MCP Server Starting...")
     mcp.run()                    
-                                 # Create a new tmux section：tmux new -s <section_name>
-if __name__ == "__main__":       ## conda activate mcp_env ;Run server.py by: fastmcp run server.py:mcp --transport http --host 0.0.0.0 --port 8000
-    main()                       ### http://host.docker.internal:8000/mcp   URL configured in openhands
+                                 
+if __name__ == "__main__":       
+    main()                       
                                  
