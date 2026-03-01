@@ -21,17 +21,14 @@ This repo contains the complete **Graph of Trace** source code, along with the p
 
 1. Open the demo link above — you’ll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) interface:
 
-   <p align="center">
-     <img src="./figures/openhands_init.jpeg" alt="OpenHands initial interface">
-   </p>
+  
+   ![OpenHands initial interface](./figures/openhands_init.jpeg "OpenHands initial interface")
 
 2. Start a new conversation and wait for the agent to become ready.
 
 3. You can find Graph of Trace on the right side.
 
-   <p align="center">
-     <img src="./figures/openhands_got.jpg" alt="Graph of Trace in OpenHands">
-   </p>
+   ![Graph of Trace in OpenHands](./figures/openhands_got.jpg "Graph of Trace in OpenHands")
 
 You can copy-paste the example prompt below to interact with the agent.  
 **Graph of Trace** will automatically refresh as the agent executes the task.
