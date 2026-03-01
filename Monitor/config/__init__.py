@@ -1,5 +1,5 @@
 """
-Configuration package for GTC MCP.
+Configuration package for *** MCP.
 
 This package provides:
 - YAML-based configuration (config.yaml + local.yaml)
