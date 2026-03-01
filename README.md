@@ -7,7 +7,6 @@
 </p>
 
 ## Introduction
-## Introduction
 
 **Graph of Trace** is a monitoring and visualization framework that records fine-grained execution events and organizes them into a directed graph, making agent workflows explicit as they proceed.
 
