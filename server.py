@@ -78,7 +78,7 @@ def logged_tool(tool_func):
     return wrapper
 
 
-mcp = FastMCP(name="TraceGraph")
+mcp = FastMCP(name="Graph_of_Trace")
 
 mcp.add_tool(logged_tool(tool.build_trace))
 
