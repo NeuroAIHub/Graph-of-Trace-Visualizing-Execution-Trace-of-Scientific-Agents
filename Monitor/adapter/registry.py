@@ -18,7 +18,7 @@ ADAPTERS: Dict[str, Type[ChatAdapter]] = {
     "openai": OpenAIAdapter,
     "deepseek": DeepSeekAdapter,
     "azure": AzureOpenAIAdapter,
-    # Add new providers here, e.g. "zhipu": ZhipuAdapter,
+    # Add new providers here
 }
 
 
