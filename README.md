@@ -1,7 +1,7 @@
 # Graph of Trace
 ![Graph of Trace](./figures/Framework.png "Framework of Graph of Trace")
 ## Introduction
-**Graph of Trace** is a monitoring and visualization framework that records fine-grained execution events and organizes them into a directed graph that makes agent workflows explicit as they proceed. **A demo video is available [here](demo.mp4)**.
+**Graph of Trace** is a monitoring and visualization framework that records fine-grained execution events and organizes them into a directed graph that makes agent workflows explicit as they proceed. You can watch our **demo video (demo.mp4 file)** to get a quick overview of Graph of Trace.
 
 **Features:**
 - Real-time rendering
@@ -12,14 +12,18 @@ This repo contains the complete Graph of Trace source code, as well as the packa
 
 ## Quick Start
 **Our online demo is available [here](http://8.145.42.208:4500 "Graph of Trace Online Demo")**
+
 1. Follow the demo link above, and you'll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) UI like this
+
 ![openhands_init](./figures/openhands_init.jpeg)
-2. Click on the user icon in the bottom-left corner to go to Settings. Then, select Large Language Model​ and enter your corresponding API key.
-![openhands_setting](./figures/openhands_setting.jpeg)
-3. Go back to initial panel by clicking openhands icon in the top-left corner, and start a new conversation.
-4. You can find Graph of Trace on the right side.
+
+2. Start a new conversation and wait for the agent to be ready.
+
+3. You can find Graph of Trace on the right side.
+
 ![openhands_got](./figures/openhands_got.jpg)
-Here is a prompt example you can use when interacting with the agent:
+
+The prompt below is an example you can use when interacting with the agent. Graph of Trace will be automatically refreshed when the agent starts the task.
 ```
 Please base your analysis on the SEED dataset and complete the following research tasks under a consistent experimental and evaluation framework:
 ### Background and motivation：
