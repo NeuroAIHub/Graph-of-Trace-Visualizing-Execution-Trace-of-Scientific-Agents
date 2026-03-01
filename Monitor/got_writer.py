@@ -128,7 +128,7 @@ def _dedupe_redundant_parents(
 
 
 def _got_session_dir(project_name: str, session_id: str) -> Path:
-    return Path(f"/srv/openhands/{project_name}/.openhands/got/{session_id}")
+    return Path(f"/***/openhands/{project_name}/.openhands/got/{session_id}")
 
 
 def _load_or_init(got_path: Path) -> Dict[str, Any]:
@@ -168,7 +168,7 @@ async def write_got_from_build_trace(
 ) -> Dict[str, Any]:
     """Load got.json, call LLM to generate nodes from subtask (+ artifacts), append, save.
 
-    - Path: /srv/openhands/<project_name>/.openhands/got/<session_id>/got.json
+    - Path: /***/openhands/<project_name>/.openhands/got/<session_id>/got.json
     - Uses fcntl lock.
     """
     from .steps_llm import build_nodes
