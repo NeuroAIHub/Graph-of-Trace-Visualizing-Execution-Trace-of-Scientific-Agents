@@ -1,0 +1,38 @@
+runtime:
+  # Default provider to use
+  active_provider: "openai"
+  # Which API profile to use under this provider
+  active_api: "default"
+
+providers:
+  openai:
+    # Configure real API Key in local.yaml or environment variables
+    api_key: "${OPENAI_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://api.openai.com/v1"
+        model: "gpt-4.1-mini"
+      gpt4:
+        api_base: "https://api.openai.com/v1"
+        model: "gpt-4.1"
+
+  deepseek:
+    api_key: "${DEEPSEEK_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://api.deepseek.com"
+        model: "deepseek-chat"
+
+  azure:
+    # Azure OpenAI typical config example:
+    # api_base format: https://<your-resource-name>.openai.azure.com
+    api_key: "${AZURE_OPENAI_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://your-azure-resource-name.openai.azure.com"
+        deployment: "gpt-4o"         # Azure deployment name
+        api_version: "2024-02-15-preview"
+
