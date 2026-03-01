@@ -1,29 +1,46 @@
 # Graph of Trace
-![Graph of Trace](./figures/Framework.png "Framework of Graph of Trace")
-## Introduction
-**Graph of Trace** is a monitoring and visualization framework that records fine-grained execution events and organizes them into a directed graph that makes agent workflows explicit as they proceed. You can watch our **demo video (demo.mp4 file)** to get a quick overview of Graph of Trace.
 
-**Features:**
+<p align="center">
+  <img src="./figures/Framework.png" alt="Framework of Graph of Trace" width="720">
+  <br>
+  <em>Framework of Graph of Trace</em>
+</p>
+
+## Introduction
+## Introduction
+
+**Graph of Trace** is a monitoring and visualization framework that records fine-grained execution events and organizes them into a directed graph, making agent workflows explicit as they proceed.
+
+You can watch our **demo video** (`demo.mp4`) to get a quick overview of Graph of Trace.
+
+### ✨ Features
 - Real-time rendering
 - MCP-enabled
 - Agent trajectory level
 
-This repo contains the complete Graph of Trace source code, as well as the packaged MCP tool `build_trace` and MCP server.
+This repo contains the complete **Graph of Trace** source code, along with the packaged MCP tool `build_trace` and MCP server.
 
 ## Quick Start
-**Our online demo is available [here](http://8.145.42.208:4500 "Graph of Trace Online Demo")**
+**Try the online demo here →**  
+👉 [Graph of Trace Online Demo](http://8.145.42.208:4500)
 
-1. Follow the demo link above, and you'll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) UI like this
+1. Open the demo link above — you’ll see a modified [OpenHands](https://docs.openhands.dev/overview/introduction) interface:
 
-![openhands_init](./figures/openhands_init.jpeg)
+   <p align="center">
+     <img src="./figures/openhands_init.jpeg" alt="OpenHands initial interface" width="720">
+   </p>
 
-2. Start a new conversation and wait for the agent to be ready.
+2. Start a new conversation and wait for the agent to become ready.
 
 3. You can find Graph of Trace on the right side.
 
-![openhands_got](./figures/openhands_got.jpg)
+   <p align="center">
+     <img src="./figures/openhands_got.jpg" alt="Graph of Trace in OpenHands" width="720">
+   </p>
 
-The prompt below is an example you can use when interacting with the agent. Graph of Trace will be automatically refreshed when the agent starts the task.
+You can copy-paste the example prompt below to interact with the agent.  
+**Graph of Trace** will automatically refresh as the agent executes the task.
+
 ```
 Please base your analysis on the SEED dataset and complete the following research tasks under a consistent experimental and evaluation framework:
 ### Background and motivation：
@@ -42,11 +59,10 @@ Evaluate and compare power spectral density, differential entropy, and multiple 
 
 4.Identify the minimal electrode montage that retains emotion-discrimination capability equivalent to the full 62-channel setup.
 First, rank all EEG channels in descending order according to their information content. Then, progressively select the Top-4, Top-6, Top-9, Top-12, and the full 62-channel sets for experimental evaluation and comparative analysis.
-
 ```
 
 ## Notes
-- You can adjust the layout​ by dragging​ and zooming on the canvas.
-- Click on a node to view its details.
+- You can adjust the layout​ by **dragging**​ and **zooming** on the canvas.
+- Click on a **node** to view its details.
 
 
