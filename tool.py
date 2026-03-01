@@ -14,7 +14,7 @@ from pydantic import BaseModel
 # -------- Monitor (build_trace / GoT) --------
 # Monitor tool suite: records completed, user-verifiable subtasks into the task GoT.
 # Registered by the combined MCP server entrypoint (server.py).
-# GoT output: /srv/openhands/<project_name>/.openhands/got/<session_id>/got.json
+# GoT output: /***/openhands/<project_name>/.openhands/got/<session_id>/got.json
 
 _log_monitor = logging.getLogger("mcp_tools.monitor")
 
