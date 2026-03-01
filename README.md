@@ -1,10 +1,6 @@
 # Graph of Trace
 
-<p align="center">
-  <img src="./figures/Framework.png" alt="Framework of Graph of Trace">
-  <br>
-  <em>Framework of Graph of Trace</em>
-</p>
+![Framework of Graph of Trace](./figures/Framework.png "Framework of Graph of Trace")
 
 ## Introduction
 
