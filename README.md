@@ -30,8 +30,9 @@ This repo contains the complete **Graph of Trace** source code, along with the p
 
    ![Graph of Trace in OpenHands](./figures/openhands_got.jpg "Graph of Trace in OpenHands")
 
-You can copy-paste the example prompt below to interact with the agent.  
-**Graph of Trace** will automatically refresh as the agent executes the task.
+You can copy-paste the example prompt below to interact with the agent. **Graph of Trace** will automatically refresh as the agent executes the task.
+
+**(For a smoother demo, we have pre-configured the necessary environment and provided a sample dataset (used due to storage size constraints) for the agent in this example.)**
 
 ```
 Please base your analysis on the SEED dataset and complete the following research tasks under a consistent experimental and evaluation framework:
