@@ -62,6 +62,6 @@ First, rank all EEG channels in descending order according to their information 
 
 ## Notes
 - You can adjust the layout​ by **dragging**​ and **zooming** on the canvas.
-- Click on a **node** to view its details.
+- Click on a **node** to view its detailed information.
 
 
