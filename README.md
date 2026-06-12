@@ -71,7 +71,7 @@ writes `got.json` straight into the viewer's served directory:
 scripts/start.sh
 ```
 
-- MCP server starts (default: streamable-http on `127.0.0.1:8000`).
+- MCP server starts (the script uses streamable-http on `127.0.0.1:8000`).
 - Viewer opens on `http://localhost:4500` and live-updates as the agent records subtasks.
 - The server is pointed at `frontend/public/got.json` via `GOT_OUTPUT_BASE_DIR`.
 
@@ -228,7 +228,6 @@ your own data without rebuilding:
 The viewer expects exactly the [`got.json` schema](#gotjson-schema) below, so it
 works with the file the backend writes to the configured `output.path_template`
 (serve that file over HTTP, or copy it to `public/got.json`).
-
 
 ## `got.json` schema
 
