@@ -30,3 +30,4 @@ got.json.lock
 node_modules/
 frontend/dist/
 *.local
+demo_small.mp4
