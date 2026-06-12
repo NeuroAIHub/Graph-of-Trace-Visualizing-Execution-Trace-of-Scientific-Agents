@@ -1,5 +1,5 @@
 import asyncio
-import uvicorn
+import os
 from mcp.server.fastmcp import FastMCP
 import tool
 import logging
@@ -78,15 +78,56 @@ def logged_tool(tool_func):
     return wrapper
 
 
-mcp = FastMCP(name="Graph_of_Trace")
+_VALID_TRANSPORTS = {"stdio", "sse", "streamable-http"}
 
-mcp.add_tool(logged_tool(tool.build_trace))
+
+def _build_server(host: str, port: int) -> FastMCP:
+    mcp = FastMCP(name="Graph_of_Trace", host=host, port=port)
+    mcp.add_tool(logged_tool(tool.build_trace))
+    return mcp
+
+
+# Module-level instance for hosts that import the app object directly
+# (e.g. `server.mcp`). The CLI in main() builds its own with chosen host/port.
+mcp = _build_server(os.getenv("GOT_HOST", "127.0.0.1"), int(os.getenv("GOT_PORT", "8000")))
 
 
 def main() -> None:
-    logger.info("MCP Server Starting...")
-    mcp.run()                    
-                                 
-if __name__ == "__main__":       
-    main()                       
-                                 
+    """Run the MCP server.
+
+    Transport is selected via CLI or env (CLI wins):
+      - --transport {stdio|sse|streamable-http}   (env: GOT_TRANSPORT, default: stdio)
+      - --host HOST                               (env: GOT_HOST, default: 127.0.0.1)
+      - --port PORT                               (env: GOT_PORT, default: 8000)
+
+    HTTP and SSE bind to host:port; stdio ignores them.
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Graph of Trace MCP server")
+    parser.add_argument(
+        "--transport",
+        choices=sorted(_VALID_TRANSPORTS),
+        default=os.getenv("GOT_TRANSPORT", "stdio"),
+        help="Transport protocol (default: stdio).",
+    )
+    parser.add_argument("--host", default=os.getenv("GOT_HOST", "127.0.0.1"))
+    parser.add_argument("--port", type=int, default=int(os.getenv("GOT_PORT", "8000")))
+    args = parser.parse_args()
+
+    mcp = _build_server(args.host, args.port)
+
+    if args.transport == "stdio":
+        logger.info("MCP Server Starting... transport=stdio")
+    else:
+        logger.info(
+            "MCP Server Starting... transport=%s host=%s port=%d",
+            args.transport,
+            args.host,
+            args.port,
+        )
+    mcp.run(transport=args.transport)
+
+
+if __name__ == "__main__":
+    main()

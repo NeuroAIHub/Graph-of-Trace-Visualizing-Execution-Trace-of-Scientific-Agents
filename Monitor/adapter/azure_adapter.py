@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import httpx
 
 from .base_adapter import ChatAdapter
+
+log = logging.getLogger("mcp_tools.monitor")
 
 
 class AzureOpenAIAdapter(ChatAdapter):
@@ -42,11 +45,11 @@ class AzureOpenAIAdapter(ChatAdapter):
         params = {"api-version": api_version}
 
         # ---- Debug info (excludes user content) ----
-        print("[AzureOpenAIAdapter] base_url:", api_base)
-        print("[AzureOpenAIAdapter] path:", path)
-        print("[AzureOpenAIAdapter] params:", params)
-        print("[AzureOpenAIAdapter] deployment:", deployment)
-        print("[AzureOpenAIAdapter] timeout:", timeout)
+        log.debug("[AzureOpenAIAdapter] base_url=%s", api_base)
+        log.debug("[AzureOpenAIAdapter] path=%s", path)
+        log.debug("[AzureOpenAIAdapter] params=%s", params)
+        log.debug("[AzureOpenAIAdapter] deployment=%s", deployment)
+        log.debug("[AzureOpenAIAdapter] timeout=%s", timeout)
 
         async with httpx.AsyncClient(base_url=api_base, timeout=timeout, trust_env=False) as client:
             try:
@@ -62,7 +65,7 @@ class AzureOpenAIAdapter(ChatAdapter):
                     },
                 )
                 # Print response status code for debugging
-                print("[AzureOpenAIAdapter] status_code:", response.status_code)
+                log.debug("[AzureOpenAIAdapter] status_code=%s", response.status_code)
                 response.raise_for_status()
             except httpx.HTTPStatusError as exc:
                 # Enhance error message with URL and first part of response text

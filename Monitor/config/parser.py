@@ -56,6 +56,25 @@ def load_config() -> Dict[str, Any]:
     return _replace_env(merged)
 
 
+_DEFAULT_BASE_DIR = "~/.graph_of_trace"
+_DEFAULT_PATH_TEMPLATE = "{base_dir}/{project_name}/{session_id}/got.json"
+
+
+def get_output_config(cfg: Dict[str, Any]) -> Dict[str, str]:
+    """Return the GoT output location config.
+
+    Reads the top-level `output` section, falling back to agent-agnostic
+    defaults. Values may contain ${ENV_VAR} (already substituted by
+    load_config) and a leading "~" (expanded by the writer).
+    """
+    out = cfg.get("output") or {}
+    if not isinstance(out, dict):
+        out = {}
+    base_dir = out.get("base_dir") or _DEFAULT_BASE_DIR
+    path_template = out.get("path_template") or _DEFAULT_PATH_TEMPLATE
+    return {"base_dir": str(base_dir), "path_template": str(path_template)}
+
+
 def get_active_provider(cfg: Dict[str, Any]) -> str:
     """Return the currently active provider, falling back to 'openai'."""
     return cfg.get("runtime", {}).get("active_provider", "openai")

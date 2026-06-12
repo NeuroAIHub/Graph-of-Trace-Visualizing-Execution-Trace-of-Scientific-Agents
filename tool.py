@@ -1,20 +1,16 @@
 from __future__ import annotations
 
 from typing import Annotated, List, Dict, Optional, Any
-from openai import OpenAI
-import os
 import json
 import logging
-import numpy as np
-from pathlib import Path
-from fastembed import TextEmbedding
 from pydantic import BaseModel
 
 
 # -------- Monitor (build_trace / GoT) --------
 # Monitor tool suite: records completed, user-verifiable subtasks into the task GoT.
 # Registered by the combined MCP server entrypoint (server.py).
-# GoT output: /***/openhands/<project_name>/.openhands/got/<session_id>/got.json
+# GoT output path is agent-agnostic and resolved from config `output`
+# (base_dir + path_template); see Monitor/config/config.yaml.
 
 _log_monitor = logging.getLogger("mcp_tools.monitor")
 
@@ -59,7 +55,8 @@ class BuildTracePayload(BaseModel):
     - payload.artifacts (required but may be empty [])
 
     Output:
-    - Writes GoT JSON to `/srv/openhands/<project_name>/.openhands/got/<session_id>/got.json`.
+    - Writes GoT JSON to the path resolved from config `output`
+      (base_dir + path_template); agent-agnostic. See Monitor/config/config.yaml.
     """
 
     project: BuildTraceProject

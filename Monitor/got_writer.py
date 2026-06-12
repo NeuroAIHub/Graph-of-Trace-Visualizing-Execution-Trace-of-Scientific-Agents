@@ -127,8 +127,37 @@ def _dedupe_redundant_parents(
     return removed
 
 
-def _got_session_dir(project_name: str, session_id: str) -> Path:
-    return Path(f"/***/openhands/{project_name}/.openhands/got/{session_id}")
+def _sanitize_path_segment(value: str) -> str:
+    """Make an agent-supplied identifier safe to use as a path segment.
+
+    Strips path separators and parent refs so project_name / session_id can
+    never escape the configured base_dir.
+    """
+    s = (value or "").strip()
+    s = s.replace("\\", "/")
+    parts = [p for p in s.split("/") if p and p not in (".", "..")]
+    cleaned = "_".join(parts) if parts else "unknown"
+    return cleaned
+
+
+def _resolve_got_path(project_name: str, session_id: str) -> Path:
+    """Resolve the got.json path from the configured output template.
+
+    Path layout is fully agent-agnostic and driven by config `output`
+    (base_dir + path_template). See Monitor/config/config.yaml.
+    """
+    from .config.parser import load_config, get_output_config
+
+    cfg = load_config()
+    oc = get_output_config(cfg)
+
+    base_dir = os.path.expanduser(oc["base_dir"])
+    rendered = oc["path_template"].format(
+        base_dir=base_dir,
+        project_name=_sanitize_path_segment(project_name),
+        session_id=_sanitize_path_segment(session_id),
+    )
+    return Path(os.path.expanduser(rendered))
 
 
 def _load_or_init(got_path: Path) -> Dict[str, Any]:
@@ -168,16 +197,16 @@ async def write_got_from_build_trace(
 ) -> Dict[str, Any]:
     """Load got.json, call LLM to generate nodes from subtask (+ artifacts), append, save.
 
-    - Path: /***/openhands/<project_name>/.openhands/got/<session_id>/got.json
+    - Path: resolved from config `output` (base_dir + path_template); agent-agnostic.
     - Uses fcntl lock.
     """
     from .steps_llm import build_nodes
 
-    session_dir = _got_session_dir(project_name, session_id)
+    got_path = _resolve_got_path(project_name, session_id)
+    session_dir = got_path.parent
     session_dir.mkdir(parents=True, exist_ok=True)
 
-    got_path = session_dir / "got.json"
-    lock_path = session_dir / "got.json.lock"
+    lock_path = session_dir / f"{got_path.name}.lock"
 
     with lock_path.open("w") as lock_f:
         fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX)

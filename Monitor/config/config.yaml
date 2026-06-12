@@ -4,6 +4,19 @@ runtime:
   # Which API profile to use under this provider
   active_api: "default"
 
+output:
+  # Where got.json files are written. Fully agent-agnostic: point this at
+  # whatever location your agent/frontend reads from. Both base_dir and
+  # path_template support ${ENV_VAR} substitution and a leading "~".
+  #
+  # The frontend MUST resolve got.json using the SAME path_template so it can
+  # locate the file the backend writes.
+  #
+  # Example for OpenHands: set path_template to
+  #   "{base_dir}/{project_name}/.openhands/got/{session_id}/got.json"
+  base_dir: "~/.graph_of_trace"
+  path_template: "{base_dir}/{project_name}/{session_id}/got.json"
+
 providers:
   openai:
     # Configure real API Key in local.yaml or environment variables

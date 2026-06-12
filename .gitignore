@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local config & secrets
+Monitor/config/local.yaml
+.env
+
+# Runtime artifacts
+mcp_server.log*
+*.tmp.*
+got.json.lock
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
