@@ -76,7 +76,13 @@ async def build_trace(
         "Payload: project.name, session.id, one subtask (title, description, optional depends_on), artifacts list (required, may be empty).",
     ]
 ) -> Dict[str, str]:
-    """Record a single **completed, user-verifiable subtask** into the task GoT.
+    """Call this **immediately after** you finish any executable step that produced a
+    verifiable result or artifact, to record that single step into the task GoT.
+
+    Triggers: a dependency just installed, a dataset was acquired/preprocessed, a code
+    file was created/changed, a training/inference/eval run finished, a figure was
+    saved, or an analysis/conclusion was written. Record one finished step per call,
+    as soon as it completes — do not batch or wait until the end.
 
     <MCP_TOOL_PURPOSE>
     * This tool records **what was done** (an executable, verifiable operation) and its artifact
@@ -88,7 +94,9 @@ async def build_trace(
     * Each MCP record MUST represent exactly ONE executable action step.
     * Do NOT call for planning, debugging, or rephrasing.
     * After completing any subtask, you must immediately record it via the MCP tool.
-    * When in doubt about whether the step qualifies or not, you must still record it.
+    * When in doubt about whether the step qualifies or not, you must still record it
+      (this applies only to a **finished action**; it does not turn planning or
+      debugging into a record).
     * Each deliverable should be recorded **once only**.
     * Prefer multiple smaller calls over one big call when you have multiple distinct deliverables.
     </MCP_CALL_GATE>

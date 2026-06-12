@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import textwrap
 from typing import Any, Dict, List, Optional
 
 from .adapter.registry import get_chat_adapter
@@ -81,7 +82,32 @@ async def build_nodes(
     current_nodes = steps.get("nodes", [])
     existing_node_ids = [n.get("id") for n in current_nodes if n.get("id")]
     allowed_parent_ids = set([x for x in existing_node_ids if isinstance(x, str)])
-    project_name = steps.get("meta", {}).get("project_name")
+
+    # Compact view of existing nodes for parent selection. Full description/artifacts
+    # are dropped (irrelevant to choosing parents and the main driver of prompt
+    # growth); description is kept truncated to preserve semantic matching.
+    _DESC_CAP = 160
+
+    def _compact_existing_node(n: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        nid = n.get("id")
+        if not isinstance(nid, str) or not nid.strip():
+            return None
+        view: Dict[str, Any] = {"id": nid.strip(), "title": str(n.get("title") or "").strip()}
+        desc = str(n.get("description") or "").strip()
+        if desc:
+            view["description"] = desc[:_DESC_CAP] + ("…" if len(desc) > _DESC_CAP else "")
+        parents = n.get("parents")
+        if isinstance(parents, list):
+            pview = [
+                {"id": p["id"].strip()}
+                for p in parents
+                if isinstance(p, dict) and isinstance(p.get("id"), str) and p["id"].strip()
+            ]
+            if pview:
+                view["parents"] = pview
+        return view
+
+    existing_nodes_view = [v for v in (_compact_existing_node(n) for n in current_nodes) if v]
 
     compact_subtask = {
         "title": title.strip(),
@@ -99,7 +125,7 @@ async def build_nodes(
         if isinstance(p, str) and p.strip() and isinstance(t, str) and t.strip():
             compact_artifacts.append({"path": p.strip(), "type": t.strip()})
 
-    system_hint = (
+    system_hint = textwrap.dedent(
         """
         You are a strict information extractor. Convert the provided subtask summary into one or more Graph-of-Trace (GoT) DAG nodes.
         Node Definition:
@@ -150,6 +176,7 @@ async def build_nodes(
         Parent Selection:
         - Each node MUST have at least one parent.
         - Parents represent logical research justification, NOT chronological execution order.
+        - The `relation` field of every parent MUST be exactly "necessitated_by"; no other value is allowed.
         - You MUST select parent ids from `existing_node_ids` (or from ids you declare in the same output array).
         - Use `subtask.depends_on` (if provided) as the primary evidence for selecting parent(s).
         - A parent MUST correspond to a research-level result or decision without which the current node would not make semantic sense.
@@ -172,56 +199,73 @@ async def build_nodes(
         Rules:
         - Execution, visualization, analysis, and conclusion nodes MUST produce concrete, inspectable artifacts.
         - Setup or literature nodes MAY have empty artifacts if no file-level output exists.
+
+        Status (optional):
+        `status` is an optional short label describing the outcome of the node,
+        shown verbatim in the frontend. Include it only when the subtask states a
+        clear outcome; use one of: "completed", "failed", "in_progress". Omit the
+        field entirely if the outcome is not stated — do NOT guess.
         
         Examples (Definitive Reference)
         These examples define the expected granularity and dependency structure.
-        Follow them strictly.
+        Follow them strictly. In every example, parent ids are taken either from
+        `existing_node_ids` or from an id declared earlier in the same output array;
+        never invent ids like "P1" or "A". New node ids follow the N### convention
+        (e.g. "N007"); parents within the same output array must reference the ids
+        exactly as you declared them.
 
         Example 1 — Sequential dependency
+        Assume existing_node_ids already contains N001 (root) and
+        N002 "Implemented the proposed model".
         Input:
         "Trained the proposed model and computed accuracy."
         Output:
-        Node A:
-        title: Trained the proposed model
-        parents: [{id: "P1", relation: "necessitated_by"}]
-        Node B:
-        title: Computed accuracy of the trained model
-        parents: [{id: "A", relation: "necessitated_by"}]
+        [
+          {id: "N003", title: "Trained the proposed model",
+           parents: [{id: "N002", relation: "necessitated_by"}]},
+          {id: "N004", title: "Computed accuracy of the trained model",
+           parents: [{id: "N003", relation: "necessitated_by"}]}
+        ]
+        (N002 comes from existing_node_ids; N003 is declared earlier in this array.)
 
         Example 2 — Parallel experiments or hypotheses
+        Assume existing_node_ids contains N001 (root) and
+        N005 "Acquired the benchmark dataset".
         Input:
         "Ran baseline model A and baseline model B."
         Output:
-        Node A:
-        title: Ran baseline model A
-        parents: [{id: "P1", relation: "necessitated_by"}]
-        Node B:
-        title: Ran baseline model B
-        parents: [{id: "P1", relation: "necessitated_by"}]
-
+        [
+          {id: "N006", title: "Ran baseline model A",
+           parents: [{id: "N005", relation: "necessitated_by"}]},
+          {id: "N007", title: "Ran baseline model B",
+           parents: [{id: "N005", relation: "necessitated_by"}]}
+        ]
+        (Both share parent N005 — siblings, not chained.)
 
         Example 3 — Multi-stage reasoning
+        Assume existing_node_ids contains N001 (root) and N008 "Trained the model".
         Input:
         "Evaluated the model, analyzed errors, and concluded that it overfits."
         Output:
-        Node A:
-        title: Evaluated the model
-        parents: [{id: "P1", relation: "necessitated_by"}]
-        Node B:
-        title: Analyzed errors
-        parents: [{id: "A", relation: "necessitated_by"}]
-        Node C:
-        title: Concluded that the model overfits
-        parents: [{id: "B", relation: "necessitated_by"}]
-
+        [
+          {id: "N009", title: "Evaluated the model",
+           parents: [{id: "N008", relation: "necessitated_by"}]},
+          {id: "N010", title: "Analyzed errors",
+           parents: [{id: "N009", relation: "necessitated_by"}]},
+          {id: "N011", title: "Concluded that the model overfits",
+           parents: [{id: "N010", relation: "necessitated_by"}]}
+        ]
 
         Example 4 — Negative but meaningful result
+        Assume existing_node_ids contains N001 (root) and
+        N012 "Implemented the proposed approach".
         Input:
         "Tested the proposed approach but observed worse performance."
         Output:
-        Node A:
-        title: Tested the proposed approach and observed inferior performance
-        parents: [{id: "P1", relation: "necessitated_by"}]
+        [
+          {id: "N013", title: "Tested the proposed approach and observed inferior performance",
+           parents: [{id: "N012", relation: "necessitated_by"}]}
+        ]
 
         Example 5 — Engineering maintenance (excluded)
         Input:
@@ -230,21 +274,22 @@ async def build_nodes(
         NO NODE
 
         Example 6 — Literature and research gap
+        Assume existing_node_ids contains only N001 (root).
         Input:
         "Surveyed related literature and identified research gaps."
         Output:
-        Node A:
-        title: Surveyed related literature
-        parents: [{id: "N001", relation: "necessitated_by"}]
-        Node B:
-        title: Identified research gaps
-        parents: [{id: "A", relation: "necessitated_by"}]
+        [
+          {id: "N002", title: "Surveyed related literature",
+           parents: [{id: "N001", relation: "necessitated_by"}]},
+          {id: "N003", title: "Identified research gaps",
+           parents: [{id: "N002", relation: "necessitated_by"}]}
+        ]
         """
     )
 
     user_prompt = {
         "existing_node_ids": existing_node_ids,
-        "existing_nodes": current_nodes,
+        "existing_nodes": existing_nodes_view,
         "existing_nodes_note": "You MUST use only these existing node ids when selecting parents (or ids you declare in the same output array).",
         "subtask": compact_subtask,
         "artifacts": compact_artifacts,
@@ -306,6 +351,13 @@ async def build_nodes(
 
     if not isinstance(data, list):
         log.warning("got_llm subtask->nodes model returned non-array type=%s", type(data).__name__)
+        return []
+
+    if not data:
+        # Empty array = the writer LLM deliberately judged this subtask as not
+        # node-worthy (e.g. maintenance/debug). This is a policy decision, not an
+        # error; agent still gets status=ok. Logged distinctly for observability.
+        log.info("got_llm subtask->nodes rejected by writer policy (model returned empty array)")
         return []
 
     # Build a stable id remap for this batch.
@@ -392,6 +444,11 @@ async def build_nodes(
 
         nodes.append(item)
 
+    if not nodes and data:
+        log.warning(
+            "got_llm subtask->nodes all %d model items dropped as invalid (not a policy rejection)",
+            len(data),
+        )
     log.info("got_llm subtask->nodes accepted nodes=%d from model array len=%d", len(nodes), len(data))
     return nodes
 

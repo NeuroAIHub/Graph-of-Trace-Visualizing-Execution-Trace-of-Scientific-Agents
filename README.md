@@ -175,6 +175,23 @@ and its `artifacts`. Each call records one executable, verifiable step.
 }
 ```
 
+### Make the agent call it on its own
+
+The tool description says *how* to shape a record, but **when** to record is a
+workflow-wide habit that belongs in the agent's own instructions. Without this,
+many agents simply never call the tool. Two ways to supply it (use either or
+both):
+
+- **System prompt (recommended).** Paste
+  [`prompts/got_system_prompt.md`](./prompts/got_system_prompt.md) into your
+  agent's system prompt — or import it as a microagent / `CLAUDE.md` / persona
+  rule. It gives concrete triggers ("a run just finished and produced metrics →
+  record it now") plus the session-id and sibling-node rules.
+- **A reminder hook.** If your host supports hooks (e.g. a post-tool or
+  post-step hook), add one that nudges the agent to call `build_trace` after a
+  step completes. This is useful for hosts where you cannot edit the system
+  prompt, or as a backstop so records are not forgotten.
+
 See the tool docstring in `tool.py` for the full guidance on what counts as a node
 (experiments, ablations as sibling nodes, analyses, conclusions) and what does not
 (typo fixes, trivial reruns).
