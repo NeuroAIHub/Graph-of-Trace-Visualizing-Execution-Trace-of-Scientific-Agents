@@ -27,15 +27,23 @@ to a `got.json` file that a frontend can render in real time.
 
 ## How it works
 
-```
-  ┌─────────────┐   build_trace (MCP)   ┌──────────────┐   LLM extracts    ┌───────────┐
-  │  Your agent  │ ────────────────────▶ │  MCP server   │ ────nodes──────▶ │ got.json   │
-  │ (any MCP host)│   subtask + artifacts │ (this repo)   │   (DAG nodes)    │  (DAG)     │
-  └─────────────┘                        └──────────────┘                   └─────┬─────┘
-                                                                                   │ same path
-                                                                             ┌─────▼─────┐
-                                                                             │  Frontend  │
-                                                                             └───────────┘
+```mermaid
+flowchart LR
+    agent["🤖 Your agent<br/>(any MCP host)"]
+    server["⚙️ MCP server<br/>(this repo)"]
+    llm["🧠 LLM<br/>node extraction"]
+    got[("📄 got.json<br/>(DAG)")]
+    frontend["🖥️ Frontend viewer"]
+
+    agent -->|"build_trace<br/>subtask + artifacts"| server
+    server <-->|"extract DAG nodes"| llm
+    server -->|"append<br/>(file-locked, atomic)"| got
+    got -->|"same configured path"| frontend
+
+    classDef store fill:#fff3cd,stroke:#d4a017,color:#000;
+    classDef proc fill:#e7f0fd,stroke:#3b75c4,color:#000;
+    class got store;
+    class agent,server,llm,frontend proc;
 ```
 
 1. Your agent completes a verifiable subtask (install, implement, run, plot,
@@ -242,6 +250,22 @@ frontend or downstream tool.
 - Parallel experiments/variants share a parent and form sibling nodes (no false
   chaining).
 - Redundant transitive parents are pruned automatically.
+
+A typical trace — note how the two baselines are *siblings* under the dataset node
+rather than a false chain, and the comparison node has multiple parents:
+
+```mermaid
+flowchart TD
+    N001["N001 · Acquire SEED dataset"]
+    N002["N002 · ResNet-18 baseline"]
+    N003["N003 · EEGNet baseline"]
+    N004["N004 · Compare baselines"]
+
+    N001 --> N002
+    N001 --> N003
+    N002 --> N004
+    N003 --> N004
+```
 
 ## Tests
 
