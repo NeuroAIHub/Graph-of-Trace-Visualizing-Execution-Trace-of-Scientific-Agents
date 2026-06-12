@@ -20,9 +20,10 @@ to a `got.json` file that a frontend can render in real time.
 - **Trajectory level** — captures the research trajectory (experiments, analyses,
   conclusions), not raw chain-of-thought.
 
-> The visualization frontend is not yet included in this repository — it will be
-> added in a later release. Until then, any frontend can integrate by reading the
-> [`got.json` schema](#gotjson-schema) below.
+> The visualization frontend is included as a standalone viewer under
+> [`frontend/`](#frontend-viewer) — it renders any `got.json` and needs no
+> specific agent. The [`got.json` schema](#gotjson-schema) is the integration
+> contract for any other frontend.
 
 ## How it works
 
@@ -44,6 +45,23 @@ to a `got.json` file that a frontend can render in real time.
 3. The server asks an LLM to turn the subtask into one or more GoT DAG nodes and
    appends them to `got.json` (file-locked + atomic write).
 4. A frontend reads the **same configured path** and renders the graph.
+
+## Quickstart (server + viewer together)
+
+One script launches the MCP server and the frontend viewer, wired so the server
+writes `got.json` straight into the viewer's served directory:
+
+```bash
+scripts/start.sh
+```
+
+- MCP server starts (default: streamable-http on `127.0.0.1:8000`).
+- Viewer opens on `http://localhost:4500` and live-updates as the agent records subtasks.
+- The server is pointed at `frontend/public/got.json` via `GOT_OUTPUT_BASE_DIR`.
+
+Override with env, e.g. `GOT_TRANSPORT=sse GOT_PORT=9000 GOT_UI_PORT=4500 scripts/start.sh`.
+Prerequisites: Python deps installed (`pip install -e .`) and Node.js for the viewer
+(the script runs `npm install` on first use).
 
 ## Install
 
@@ -170,6 +188,31 @@ output:
 ```
 
 ![Graph of Trace in OpenHands](./figures/openhands_got.jpg "Graph of Trace in OpenHands — example integration")
+
+## Frontend viewer
+
+A standalone React + ReactFlow viewer lives in [`frontend/`](./frontend). It
+renders any `got.json` as a DAG (Dagre layered or D3-force layout), with a node
+details panel, drag/zoom, and adaptive polling for live updates. It has no
+dependency on any specific agent.
+
+```bash
+cd frontend
+npm install
+npm run dev      # opens on http://localhost:4500
+```
+
+By default it loads `frontend/public/got.json` (a sample is included). Point it at
+your own data without rebuilding:
+
+- `?src=<url>` query param, e.g. `http://localhost:4500/?src=/api/conversations/<id>/got`
+- or `VITE_GOT_URL` env at build time
+- or replace `public/got.json` / serve your file at `./got.json`
+
+The viewer expects exactly the [`got.json` schema](#gotjson-schema) below, so it
+works with the file the backend writes to the configured `output.path_template`
+(serve that file over HTTP, or copy it to `public/got.json`).
+
 
 ## `got.json` schema
 

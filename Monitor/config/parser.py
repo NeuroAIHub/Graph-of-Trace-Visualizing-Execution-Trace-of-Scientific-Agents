@@ -63,15 +63,27 @@ _DEFAULT_PATH_TEMPLATE = "{base_dir}/{project_name}/{session_id}/got.json"
 def get_output_config(cfg: Dict[str, Any]) -> Dict[str, str]:
     """Return the GoT output location config.
 
-    Reads the top-level `output` section, falling back to agent-agnostic
-    defaults. Values may contain ${ENV_VAR} (already substituted by
-    load_config) and a leading "~" (expanded by the writer).
+    Resolution order (first non-empty wins):
+      1. env GOT_OUTPUT_BASE_DIR / GOT_OUTPUT_PATH_TEMPLATE
+      2. the top-level `output` section in config
+      3. agent-agnostic defaults
+
+    Values may contain ${ENV_VAR} (substituted by load_config for config values)
+    and a leading "~" (expanded by the writer).
     """
     out = cfg.get("output") or {}
     if not isinstance(out, dict):
         out = {}
-    base_dir = out.get("base_dir") or _DEFAULT_BASE_DIR
-    path_template = out.get("path_template") or _DEFAULT_PATH_TEMPLATE
+    base_dir = (
+        os.getenv("GOT_OUTPUT_BASE_DIR")
+        or out.get("base_dir")
+        or _DEFAULT_BASE_DIR
+    )
+    path_template = (
+        os.getenv("GOT_OUTPUT_PATH_TEMPLATE")
+        or out.get("path_template")
+        or _DEFAULT_PATH_TEMPLATE
+    )
     return {"base_dir": str(base_dir), "path_template": str(path_template)}
 
 

@@ -1,0 +1,49 @@
+{
+  "meta": { "project_name": "demo", "session_id": "sample" },
+  "nodes": [
+    {
+      "id": "N001",
+      "title": "Session start",
+      "description": "Root node for this session.",
+      "parents": [{ "id": "N001", "relation": "necessitated_by" }]
+    },
+    {
+      "id": "N002",
+      "title": "Acquire SEED dataset",
+      "description": "Downloaded the SEED EEG emotion dataset to /data/seed.",
+      "parents": [{ "id": "N001", "relation": "necessitated_by" }],
+      "artifacts": [{ "path": "/data/seed", "type": "dir" }]
+    },
+    {
+      "id": "N003",
+      "title": "Extract differential entropy (DE) features",
+      "description": "Computed DE features per frequency band.",
+      "parents": [{ "id": "N002", "relation": "necessitated_by" }],
+      "artifacts": [{ "path": "de_features.npz", "type": "npz" }]
+    },
+    {
+      "id": "N004",
+      "title": "Train SVM baseline (gamma band)",
+      "description": "Linear SVM, seed=42, gamma-band DE features.",
+      "parents": [{ "id": "N003", "relation": "necessitated_by" }],
+      "artifacts": [{ "path": "svm_gamma_metrics.json", "type": "json" }]
+    },
+    {
+      "id": "N005",
+      "title": "Train DBN (gamma band)",
+      "description": "Deep belief network, seed=42, gamma-band DE features.",
+      "parents": [{ "id": "N003", "relation": "necessitated_by" }],
+      "artifacts": [{ "path": "dbn_gamma_metrics.json", "type": "json" }]
+    },
+    {
+      "id": "N006",
+      "title": "Compare SVM vs DBN accuracy",
+      "description": "DBN outperforms linear SVM on gamma-band DE features.",
+      "parents": [
+        { "id": "N004", "relation": "necessitated_by" },
+        { "id": "N005", "relation": "necessitated_by" }
+      ],
+      "artifacts": [{ "path": "comparison.md", "type": "md" }]
+    }
+  ]
+}
