@@ -6,6 +6,7 @@ from .base_adapter import ChatAdapter
 from .openai_adapter import OpenAIAdapter
 from .deepseek_adapter import DeepSeekAdapter
 from .azure_adapter import AzureOpenAIAdapter
+from .anthropic_adapter import AnthropicAdapter
 from ..config.parser import (
     load_config,
     get_active_provider,
@@ -18,6 +19,7 @@ ADAPTERS: Dict[str, Type[ChatAdapter]] = {
     "openai": OpenAIAdapter,
     "deepseek": DeepSeekAdapter,
     "azure": AzureOpenAIAdapter,
+    "anthropic": AnthropicAdapter,
     # Add new providers here
 }
 

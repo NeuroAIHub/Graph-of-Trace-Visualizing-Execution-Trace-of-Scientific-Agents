@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 import httpx
 
-from .base_adapter import ChatAdapter
+from .base_adapter import ChatAdapter, extract_content, post_with_retry
 
 
 class DeepSeekAdapter(ChatAdapter):
@@ -23,6 +23,7 @@ class DeepSeekAdapter(ChatAdapter):
         api_key = self.config["api_key"]
         model = self.config["model"]
         timeout = float(self.config.get("timeout", 30))
+        max_retries = int(self.config.get("max_retries", 2))
 
         messages = kwargs.get(
             "messages",
@@ -30,19 +31,26 @@ class DeepSeekAdapter(ChatAdapter):
         )
 
         async with httpx.AsyncClient(base_url=api_base, timeout=timeout, trust_env=False) as client:
-            response = await client.post(
-                "/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": model,
-                    "messages": messages,
-                },
+            response = await post_with_retry(
+                lambda: client.post(
+                    "/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": model,
+                        "messages": messages,
+                    },
+                ),
+                max_retries=max_retries,
+                label="deepseek chat",
             )
-            response.raise_for_status()
             data = response.json()
-            return data["choices"][0]["message"]["content"]
+            return extract_content(
+                data,
+                lambda d: d["choices"][0]["message"]["content"],
+                "choices[0].message.content",
+            )
 
 

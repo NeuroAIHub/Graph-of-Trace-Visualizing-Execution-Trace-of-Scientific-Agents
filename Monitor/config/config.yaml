@@ -49,3 +49,14 @@ providers:
         deployment: "gpt-4o"         # Azure deployment name
         api_version: "2024-02-15-preview"
 
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+    timeout: 30
+    apis:
+      default:
+        api_base: "https://api.anthropic.com/v1"
+        model: "claude-opus-4-8"
+        max_tokens: 1024
+        # anthropic_version: "2023-06-01"   # optional, override API version header
+
+

@@ -5,7 +5,7 @@ from typing import Any
 
 import httpx
 
-from .base_adapter import ChatAdapter
+from .base_adapter import ChatAdapter, extract_content, post_with_retry
 
 log = logging.getLogger("mcp_tools.monitor")
 
@@ -33,6 +33,7 @@ class AzureOpenAIAdapter(ChatAdapter):
         deployment = self.config["deployment"]
         api_version = self.config.get("api_version") or "2024-02-15-preview"
         timeout = float(self.config.get("timeout", 30))
+        max_retries = int(self.config.get("max_retries", 2))
 
         messages = kwargs.get(
             "messages",
@@ -52,8 +53,8 @@ class AzureOpenAIAdapter(ChatAdapter):
         log.debug("[AzureOpenAIAdapter] timeout=%s", timeout)
 
         async with httpx.AsyncClient(base_url=api_base, timeout=timeout, trust_env=False) as client:
-            try:
-                response = await client.post(
+            response = await post_with_retry(
+                lambda: client.post(
                     path,
                     params=params,
                     headers={
@@ -63,22 +64,18 @@ class AzureOpenAIAdapter(ChatAdapter):
                     json={
                         "messages": messages,
                     },
-                )
-                # Print response status code for debugging
-                log.debug("[AzureOpenAIAdapter] status_code=%s", response.status_code)
-                response.raise_for_status()
-            except httpx.HTTPStatusError as exc:
-                # Enhance error message with URL and first part of response text
-                text_snippet = exc.response.text[:500]
-                raise httpx.HTTPStatusError(
-                    f"Azure OpenAI request failed: {exc} "
-                    f"(url={exc.request.url}, response_snippet={text_snippet})",
-                    request=exc.request,
-                    response=exc.response,
-                ) from exc
+                ),
+                max_retries=max_retries,
+                label="azure chat",
+            )
+            log.debug("[AzureOpenAIAdapter] status_code=%s", response.status_code)
 
             data = response.json()
             # OpenAI-compatible response structure: choices[0].message.content
-            return data["choices"][0]["message"]["content"]
+            return extract_content(
+                data,
+                lambda d: d["choices"][0]["message"]["content"],
+                "choices[0].message.content",
+            )
 
 

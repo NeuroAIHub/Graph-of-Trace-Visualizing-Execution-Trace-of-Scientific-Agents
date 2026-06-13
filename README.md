@@ -99,7 +99,7 @@ the right place for secrets). `${ENV_VAR}` substitution is supported everywhere.
 
 ```yaml
 runtime:
-  active_provider: "openai"   # openai | deepseek | azure
+  active_provider: "openai"   # openai | deepseek | azure | anthropic
   active_api: "default"
 
 providers:
@@ -109,6 +109,24 @@ providers:
       default:
         api_base: "https://api.openai.com/v1"
         model: "gpt-4.1-mini"
+```
+
+Four providers are built in: `openai`, `deepseek`, `azure`, and `anthropic`.
+The OpenAI-style ones share the same keys (`api_base`, `model`); Anthropic uses
+the Messages API and takes `max_tokens`:
+
+```yaml
+runtime:
+  active_provider: "anthropic"
+
+providers:
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+    apis:
+      default:
+        api_base: "https://api.anthropic.com/v1"
+        model: "claude-opus-4-8"
+        max_tokens: 1024
 ```
 
 **2. Output location** — point this at wherever your agent/frontend reads from:
